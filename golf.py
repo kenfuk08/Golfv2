@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import streamlit as st
 import tensorflow as tf
 from PIL import Image, ImageOps
 from keras.models import load_model
@@ -13,7 +12,7 @@ uploaded_file = st.file_uploader("判定したい画像をアップロードし�
 np.set_printoptions(suppress=True)
 
 # Load the model
-model = load_model("src/keras_model.h5", compile=False)
+model = load_model("src/keras_model_v2.h5", compile=False)
 
 # Load the labels
 class_names = open("src/labels.txt", "r").readlines()
@@ -45,11 +44,11 @@ def predict(uploaded_file):
   # 画像を判定
   prediction = model.predict(data) #推論を実行する(分類結果の当てはまりをクラス毎に0〜1で出力)
   index = np.argmax(prediction) #結果のうち最大値のインデックスを取得
-  class_name = class_names[index] #インデックスに対応するラベル(0 cat or 1 dog)を取得
+  class_name = class_names[index] #インデックスに対応するラベル(0 or 1 )を取得
   confidence_score = round((prediction[0][index]*100),2) #信頼度スコアを取得し、100倍し、小数２位まで表示
  
   # 判定結果を格納
-  result_name = class_name[2:]  #ラベルから「golf or not」を取得
+  result_name = class_name[2:]  #ラベルから「ゴルフウェア or そうでない」を取得
 
   # 結果を返す
 
