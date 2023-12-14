@@ -4,7 +4,38 @@ import tensorflow as tf
 from PIL import Image, ImageOps
 from keras.models import load_model
 
+# タイトル
+st.title("ゴルフウェア判定アプリ")
 
+# キャプション
+st.caption("このアプリケーションは、自身の服装がゴルフ場において適切かの判断に迷った際、AIがサポートしてくれるアプリケーションです。判定したい服装を着た状態で、撮影した写真（全身が望ましいですが、上半身だけでも判定は可能です。）をアップロードしてください。")
+
+# 画像を均一なサイズにリサイズする関数
+def resize_image(image_path, target_size):
+    image = Image.open(image_path)
+    resized_image = ImageOps.fit(image, target_size, method=0, bleed=0.0, centering=(0.5, 0.5))
+    return resized_image
+
+
+# 適した例と適さない例の画像
+good_example_image = "img/good_example.png"
+bad_example_image = "img/bad_example.png"
+bad_example_image2 = "img/bad_example_2.png"
+
+# 画像を均一なサイズにリサイズ
+target_size = (300, 500)
+resized_good_example = resize_image(good_example_image, target_size)
+resized_bad_example1 = resize_image(bad_example_image, target_size)
+resized_bad_example2 = resize_image(bad_example_image2, target_size)
+
+# 画像を横に並べて表示
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.image(resized_good_example, caption="判定に適した画像です。", use_column_width=True)
+with col2:
+    st.image(resized_bad_example1, caption="人以外の画像は判定に不適です。", use_column_width=True)
+with col3:
+    st.image(resized_bad_example2, caption="ゴルフのポーズをとると高確率でゴルフウェアと認識されます。", use_column_width=True)
 ### 画像ローダー
 uploaded_file = st.file_uploader("判定したい画像をアップロードしてください。",type = ['png','jpg','jpeg'])
 
@@ -15,7 +46,7 @@ np.set_printoptions(suppress=True)
 model = load_model("src/keras_model_v2.h5", compile=False)
 
 # Load the labels
-class_names = open("src/labels.txt", "r").readlines()
+class_names = open("src/labels.txt", "r", encoding="utf-8").readlines()
 
 # Create the array of the right shape to feed into the keras model
 # The 'length' or number of images you can put into the array is
